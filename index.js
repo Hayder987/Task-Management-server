@@ -20,7 +20,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect(); 
+    await client.connect();
     const taskDb = client.db("Task-Management");
     const taskCollection = taskDb.collection("taskCollection");
 
@@ -35,16 +35,24 @@ async function run() {
         const result = await taskCollection.insertOne(task);
         res.send(result);
       } catch (err) {
-        res.status(500).send({ message: "Error adding task", error: err.message });
+        res
+          .status(500)
+          .send({ message: "Error adding task", error: err.message });
       }
     });
 
     // GET API
     app.get("/task/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { email };
-      const result = await taskCollection.find(query).toArray();
-      res.send(result);
+      try {
+        const email = req.params.email;
+        const query = { email };
+        const result = await taskCollection.find(query).toArray();
+        res.send(result);
+      } catch (err) {
+        res
+          .status(404)
+          .send({ message: "Error Get task", error: err.message });
+      }
     });
 
     // PATCH API (Update Task)
@@ -62,17 +70,33 @@ async function run() {
         const result = await taskCollection.updateOne(filter, updateDoc);
 
         if (result.modifiedCount === 0) {
-          return res.status(404).send({ message: "Task not found or no change" });
+          return res
+            .status(404)
+            .send({ message: "Task not found or no change" });
         }
 
         res.send(result);
       } catch (err) {
-        res.status(500).send({ message: "Error updating task", error: err.message });
+        res
+          .status(500)
+          .send({ message: "Error updating task", error: err.message });
       }
     });
 
+    // DELETE Api
+    app.delete("/task/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await taskCollection.deleteOne(query);
+        res.send(result);
+      } catch (err) {
+        res
+          .status(500)
+          .send({ message: "Error Deleting task", error: err.message });
+      }
+    });
     
-
   } finally {
     console.log("MongoDB running");
   }
