@@ -6,7 +6,7 @@ const port = process.env.PORT || 4000;
 const app = express();
 
 app.use(cors());
-app.use(express());
+app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.bixye.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -26,7 +26,7 @@ async function run() {
     //    set task database
     app.post("/task", async (req, res) => {
       try {
-        const email = query.email;
+        const email = req.query.email;
         if (!email) {
           return res.send({ status: "You Need Login First" });
         }
@@ -39,7 +39,7 @@ async function run() {
     });
 
 
-    
+
   } finally {
     console.log("mongodb running");
   }
