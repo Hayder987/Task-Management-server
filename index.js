@@ -38,6 +38,14 @@ async function run() {
       }
     });
 
+    // get task data
+    app.get('/task/:email', async(req, res)=>{
+        const email = req.params.email
+        const query = {email}
+        const result = await taskCollection.find(query).toArray()
+        res.send(result)
+    })
+
 
 
   } finally {
