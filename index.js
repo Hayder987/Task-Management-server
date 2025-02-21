@@ -20,7 +20,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
     const taskDb = client.db("Task-Management");
     const taskCollection = taskDb.collection("taskCollection");
 
@@ -96,7 +95,7 @@ async function run() {
           .send({ message: "Error Deleting task", error: err.message });
       }
     });
-    
+
   } finally {
     console.log("MongoDB running");
   }
